@@ -2,30 +2,38 @@
 const { app, BrowserWindow } = require('electron')
 const path = require('node:path')
 
+const tennisService = require("./src/service/tennis.service")
+
 let window;
 let settings = {
-    'renderer': {
-        'key1': 'value1',
-        'key2': 'value2'
-    }
+  'renderer': {
+    'tennis': {
+      'man': {},
+      'woman': {}
+    }   
+  }
 }
 
-function createWindow () {
+async function createWindow () {
   // Create the browser window.
   const window = new BrowserWindow({
-    width: 800,
-    height: 600,
+    width: 1000,
+    height: 800,
     webPreferences: {
-      preload: path.join(__dirname, 'public/js/preload.js')
+      preload: path.join(__dirname, 'public/js/preload.js'),
+      nativeWindowOpen: true
     }
   })
+
+  settings.renderer.tennis.man = await tennisService.getTennis(1)
+  settings.renderer.tennis.woman = await tennisService.getTennis(0)
 
   // and load the index.html of the app.
   window.loadFile('public/view.html')
     .then(() => { window.webContents.send('sendSettings', settings.renderer); })
     .then(() => { window.show(); });
   // Open the DevTools.
-  window.webContents.openDevTools()
+  // window.webContents.openDevTools()
 }
 
 // This method will be called when Electron has finished

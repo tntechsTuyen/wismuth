@@ -8,14 +8,214 @@
 	<link rel="stylesheet" type="text/css" href="css/app.min.css">
 	<link rel="stylesheet" type="text/css" href="css/vendor.min.css">
 </head>
+<style>
+    ::-webkit-scrollbar {
+        display: none;
+    }
+    
+    .mw-80px{
+        max-width: 80px;
+    }
+</style>
 <body>
-    <div class="row">
-    	<div class="col-"></div>
-    </div>
+    <main class="m-2">
+        <div class="row">
+            <label class="form-label col-form-label col-2">Gender</label>
+            <div class="col-3 pt-2">
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" id="gender1" name="gender" value="man" checked>
+                    <label class="form-check-label" for="gender1">Man</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" id="gender2" name="gender" value="woman">
+                    <label class="form-check-label" for="gender2">Woman</label>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-2">
+            <div class="col-6">
+                <div class="panel panel-inverse">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">Player information</h4>
+                        <div class="panel-heading-btn">
+                            <a href="javascript:;" class="btn btn-xs btn-icon btn-success" data-toggle="panel-reload" ><i class="fa fa-redo"></i></a>
+                            <a href="javascript:;" class="btn btn-xs btn-icon btn-warning" data-toggle="panel-collapse" ><i class="fa fa-minus"></i></a>
+                        </div>
+                    </div>
+                    <div class="panel-body">
+                        <!-- Player 1 -->
+                        <div class="row">
+                            <!-- Player 1 -->
+                            <div class="col-8">
+                                <div class="form-floating">
+                                    <input id="player_1" name="player_1" class="form-control fs-15px"/>
+                                    <label for="player_1" class="d-flex align-items-center fs-13px">Player 1<span class="text-danger ms-1">*</span></label>
+                                </div>
+                            </div>
+                            <!-- * Player 1 -->
+                            <!-- Rating 1 -->
+                            <div class="col-4">
+                                <div class="form-floating">
+                                    <input id="rating_1" name="rating_1" class="form-control fs-15px" readonly/>
+                                    <label for="rating_1" class="d-flex align-items-center fs-13px">Rating 1<span class="text-danger ms-1">*</span></label>
+                                </div>
+                            </div>
+                            <!-- * Rating 1 -->
+                        </div>
+                        <!-- * Player 1 -->
+
+                        <!-- Player 2 -->
+                        <div class="row mt-2">
+                            <!-- Player 2 -->
+                            <div class="col-8">
+                                <div class="form-floating">
+                                    <input id="player_2" name="player_2" class="form-control fs-15px"/>
+                                    <label for="player_2" class="d-flex align-items-center fs-13px">Player 2<span class="text-danger ms-1">*</span></label>
+                                </div>
+                            </div>
+                            <!-- * Player 2 -->
+                            <!-- Rating 2 -->
+                            <div class="col-4">
+                                <div class="form-floating">
+                                    <input id="rating_2" name="rating_2" class="form-control fs-15px" readonly/>
+                                    <label for="rating_2" class="d-flex align-items-center fs-13px">Rating 2<span class="text-danger ms-1">*</span></label>
+                                </div>
+                            </div>
+                            <!-- * Rating 2 -->
+                        </div>
+                        <!-- * Player 2 -->
+
+                        <!-- Type -->
+                        <div class="row mt-2">
+                            <div class="col-12">
+                                <div class="form-floating">
+                                    <select id="type" class="form-control fs-15px">
+                                        <option value="1">Hard</option>
+                                        <option value="2">Clay</option>
+                                        <option value="3">Grass</option>
+                                    </select>
+                                    <label for="type" class="d-flex align-items-center fs-13px">Type</label>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- * Type -->
+                    </div>
+                </div>
+
+                <div class="panel panel-inverse">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">Result</h4>
+                        <div class="panel-heading-btn">
+                            <a href="javascript:;" class="btn btn-xs btn-icon btn-success" data-toggle="panel-reload" ><i class="fa fa-redo"></i></a>
+                            <a href="javascript:;" class="btn btn-xs btn-icon btn-warning" data-toggle="panel-collapse" ><i class="fa fa-minus"></i></a>
+                        </div>
+                    </div>
+                    <div class="panel-body">
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="table-responsive">
+                                    <table class="table table-bordered mb-0">
+                                        <thead>
+                                            <tr>
+                                                <th>Outcome</th>
+                                                <th>Probability</th>
+                                                <th>Fraction</th>
+                                                <th>Decimal</th>
+                                                <th>American</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>Player 1 win</td>
+                                                <td>0.456933507</td>
+                                                <td>0.</td>
+                                                <td>0.</td>
+                                                <td>0.</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Player 2 win</td>
+                                                <td>0.543066493</td>
+                                                <td>0.</td>
+                                                <td>0.</td>
+                                                <td>0.</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-6">
+                <div class="panel panel-inverse">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">Players</h4>
+                        <div class="panel-heading-btn">
+                            <a href="javascript:;" class="btn btn-xs btn-icon btn-success" data-toggle="panel-reload" ><i class="fa fa-redo"></i></a>
+                            <a href="javascript:;" class="btn btn-xs btn-icon btn-warning" data-toggle="panel-collapse" ><i class="fa fa-minus"></i></a>
+                        </div>
+                    </div>
+                    <div class="panel-body" style="height: 85vh; overflow-y: scroll;">
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="table-responsive">
+                                    <table id="tbl-players" class="table table-bordered mb-0">
+                                        <thead>
+                                            <tr>
+                                                <th>#</th>
+                                                <th>Player</th>
+                                                <th>Age</th>
+                                                <th>Elo</th>
+                                                <th>hElo</th>
+                                                <th>cElo</th>
+                                                <th>gElo</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td class="text-center" colspan="100%">No data !!!</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    
+
 </body>
 <script>
     window.bridge.sendSettings((event, settings) => {
-        console.log(settings);
+        console.log(settings)
+        loadPlayers(settings.tennis)
     });
+
+    function loadPlayers(tennis){
+        const gender = $(`input[name=gender]:checked`).val()
+        const data = tennis[gender]
+        
+        $("#tbl-players tbody").html("")
+        for(var i = 0; i < data.length; i++){
+            $("#tbl-players tbody").append(`
+                <tr>
+                    <td>${i+1}</td>
+                    <td><label class="mw-80px text-truncate" title="${data[i].name}">${data[i].name}</label></td>
+                    <td>${data[i].age}</td>
+                    <td>${data[i].elo}</td>
+                    <td>${data[i].hElo}</td>
+                    <td>${data[i].cElo}</td>
+                    <td>${data[i].gElo}</td>
+                </tr>
+            `)
+        }
+    }
 </script>
 </html>

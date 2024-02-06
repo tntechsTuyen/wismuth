@@ -2,8 +2,16 @@ const axios = require("axios")
 const cheerio = require('cheerio')
 
 const service = {
-	getTennis: async function(){
-		const url = "https://tennisabstract.com/reports/wta_elo_ratings.html?fbclid=IwAR3AOwGMfzhg8CY5Pu-irXM_UxVkLbjIM0QNFLhu45SF0YFdPkVnoRiV3zE"
+	getTennis: async function(gender){
+		var url = ""
+		if(gender == 1){
+			//Men
+			url = "https://tennisabstract.com/reports/atp_elo_ratings.html"
+		}else{
+			//Woman
+			url = "https://tennisabstract.com/reports/wta_elo_ratings.html"
+		}
+		
 		const req = await axios.get(url)
 		const data = req.data
 		const $ = cheerio.load(data)
@@ -19,9 +27,9 @@ const service = {
 				hardRaw: cols.eq(5).text(),
 				clayRaw: cols.eq(6).text(),
 				grassRaw: cols.eq(7).text(),
-				hElo: cols.eq(8).text(),
-				cElo: cols.eq(9).text(),
-				gElo: cols.eq(10).text()
+				hElo: cols.eq(9).text(),
+				cElo: cols.eq(10).text(),
+				gElo: cols.eq(11).text()
 			})
 		}
 		return tennis
