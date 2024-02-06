@@ -2,9 +2,17 @@
 const { app, BrowserWindow } = require('electron')
 const path = require('node:path')
 
+let window;
+let settings = {
+    'renderer': {
+        'key1': 'value1',
+        'key2': 'value2'
+    }
+}
+
 function createWindow () {
   // Create the browser window.
-  const mainWindow = new BrowserWindow({
+  const window = new BrowserWindow({
     width: 800,
     height: 600,
     webPreferences: {
@@ -13,10 +21,11 @@ function createWindow () {
   })
 
   // and load the index.html of the app.
-  mainWindow.loadFile('public/view.html')
-
+  window.loadFile('public/view.html')
+    .then(() => { window.webContents.send('sendSettings', settings.renderer); })
+    .then(() => { window.show(); });
   // Open the DevTools.
-  // mainWindow.webContents.openDevTools()
+  window.webContents.openDevTools()
 }
 
 // This method will be called when Electron has finished
