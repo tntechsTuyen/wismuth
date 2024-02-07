@@ -129,7 +129,7 @@
                             <a href="javascript:;" class="btn btn-xs btn-icon btn-warning" data-toggle="panel-collapse" ><i class="fa fa-minus"></i></a>
                         </div>
                     </div>
-                    <div class="panel-body">
+                    <div class="panel-body p-0">
                         <div class="row">
                             <div class="col-12">
                                 <div class="table-responsive">
@@ -137,26 +137,28 @@
                                         <thead>
                                             <tr>
                                                 <th>Outcome</th>
-                                                <th>Probability</th>
+                                                <th colspan="2">Probability</th>
                                                 <th>Fraction</th>
                                                 <th>Decimal</th>
                                                 <th>American</th>
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <tr>
+                                            <tr id="result_player_1">
                                                 <td>Player 1 win</td>
-                                                <td>0.456933507</td>
-                                                <td>0.</td>
-                                                <td>0.</td>
-                                                <td>0.</td>
+                                                <td class="probability"></td>
+                                                <td class="implied"></td>
+                                                <td class="fraction"></td>
+                                                <td class="decimal"></td>
+                                                <td class="american"></td>
                                             </tr>
-                                            <tr>
+                                            <tr id="result_player_2">
                                                 <td>Player 2 win</td>
-                                                <td>0.543066493</td>
-                                                <td>0.</td>
-                                                <td>0.</td>
-                                                <td>0.</td>
+                                                <td class="probability"></td>
+                                                <td class="implied"></td>
+                                                <td class="fraction"></td>
+                                                <td class="decimal"></td>
+                                                <td class="american"></td>
                                             </tr>
                                         </tbody>
                                     </table>
@@ -177,7 +179,7 @@
                             <a href="javascript:;" class="btn btn-xs btn-icon btn-warning" data-toggle="panel-collapse" ><i class="fa fa-minus"></i></a>
                         </div>
                     </div>
-                    <div class="panel-body" style="height: 85vh; overflow-y: scroll;">
+                    <div class="panel-body p-0" style="height: 85vh; overflow-y: scroll;">
                         <div class="row">
                             <div class="col-12">
                                 <div class="table-responsive">
@@ -218,6 +220,7 @@
     window.bridge.sendSettings((event, settings) => {
     	dataset = settings
     	dataset.tennis = settings.tennis
+        dataset.odds = settings.odds
     	dataset.tennisM = {}
     	dataset.player = {"p_1": {},"p_2": {}}
     	dataset.tennisM.man = dataset.tennis.man.map(function(item) {
@@ -277,6 +280,15 @@
 			$(`input[name=rating_h_elo_2]`).val("")
 			$(`input[name=rating_c_elo_2]`).val("")
 			$(`input[name=rating_g_elo_2]`).val("")
+
+            $(".probability").html("")
+            $(".implied").html("")
+            $(".fraction").html("")
+            $(".decimal").html("")
+            $(".american").html("")
+
+            dataset.player[`p_1`] = null
+            dataset.player[`p_2`] = null
     	})
 
     	$(`input[name=player_name]`).keyup(function(){
@@ -301,7 +313,9 @@
 				$(`input[name=rating_c_elo_${id}]`).val(dataset.tennis[gender][index].cElo)
 				$(`input[name=rating_g_elo_${id}]`).val(dataset.tennis[gender][index].gElo)
     			$(this).addClass("is-valid")
+                applyParams()
     		}else{
+                dataset.player[`p_${id}`] = null
     			$(this).addClass("is-invalid")
     		}
     	})
@@ -316,9 +330,7 @@
 
     		$(`input[name=rating_${elo}_elo_1]`).addClass("elo-selected")
     		$(`input[name=rating_${elo}_elo_2]`).addClass("elo-selected")
-
-    		dataset.player[`p_1`] = null
-    		dataset.player[`p_2`] = null
+            applyParams()
     	})
     }
 </script>
@@ -344,17 +356,36 @@ function getRating(player){
 	return rate
 }
 
+function findOdds(prob){
+    const tmpProb = prob * 100
+    if(tmpProb < 99){
+        for(var i = 0; i < dataset.odds.length - 1; i++){
+            var o1 = dataset.odds[i]
+            var implied1 = parseFloat(o1.implied.replace("%", ""))
+            var o2 = dataset.odds[i+1]
+            var implied2 = parseFloat(o2.implied.replace("%", ""))
+            
+            // console.log(`${tmpProb} - ${implied1} - ${implied2}: ${(tmpProb >= implied1 && tmpProb < implied2)}`)
+            if(tmpProb >= implied2 && tmpProb < implied1){
+                return [o1, `${implied2}% - ${implied1}%`]
+            }
+        }
+    }else{
+        return [dataset.odds[0], `99% - 100%`]
+    }
+}
+
 function applyParams() {
+    if(dataset.player.p_1.name != undefined && dataset.player.p_2.name != undefined){
+        var rating1 = getRating(dataset.player.p_1);
+        var rating2 = getRating(dataset.player.p_2);
 
-	// What we're going to show in the UI.
-	var rating1 = getRating(dataset.player.p_1);
-	var rating2 = getRating(dataset.player.p_2);
-
-	var eloDiffH = eloDiff(parseFloat(rating1), parseFloat(rating2), "random")
-	var eloDiff = eloDiffH.toFixed(0)
-	var eScoreH = eloFn(eloDiffH)
-	var eScore = eScoreH.toFixed(9);
-	updateProbabilities(eScoreH, 0);
+        var eloDiffH = fnEloDiff(parseFloat(rating1), parseFloat(rating2), "random")
+        var eloDiff = eloDiffH.toFixed(0)
+        var eScoreH = eloFn(eloDiffH)
+        var eScore = eScoreH.toFixed(9);
+        updateProbabilities(eScoreH, 0);
+    }
 }
 
 // Use high-precision eScore and drawProb to avoid rounding issues.
@@ -379,7 +410,7 @@ function updateProbabilities(eScore, drawProb) {
 		probs = ["(current score has wrong format)", "", ""];
 	else if (tournament == "best-of") {
 		// var n = parseInt($("input[name=best-of]").val());
-		var n = 1
+		var n = 3
 		var winProb = eScore - drawProb/2;
 		probs = computeProbBestOf(n, winProb, drawProb, s1, s2);
 	}
@@ -395,10 +426,22 @@ function updateProbabilities(eScore, drawProb) {
 	}
 	else
 		probs = ["?", "?", "?"];
-	// $("span#win1").text(probs[0]);
-	// $("span#win2").text(probs[1]);
+
+    const odds1 = findOdds(probs[0])
+    const odds2 = findOdds(probs[1])
+
+    $("#result_player_1 .probability").html(`<label class="mw-50px text-truncate" title="${probs[0]}">${probs[0]}</label>`);
+    $("#result_player_1 .implied").html(`<span class="badge bg-secondary">${odds1[1]}</span>`);
+    $("#result_player_1 .fraction").text(odds1[0].fraction);
+    $("#result_player_1 .decimal").text(odds1[0].decimal);
+    $("#result_player_1 .american").text(odds1[0].american);
+
+    $("#result_player_2 .probability").html(`<label class="mw-50px text-truncate" title="${probs[1]}">${probs[1]}</label>`);
+    $("#result_player_2 .implied").html(`<span class="badge bg-secondary">${odds2[1]}</span>`);
+    $("#result_player_2 .fraction").text(odds2[0].fraction);
+    $("#result_player_2 .decimal").text(odds2[0].decimal);
+    $("#result_player_2 .american").text(odds2[0].american);
 	// $("span#draw").text(probs[2]);
-	console.log(probs)
 }
 
 function computeProbBestOf(n, winProb, drawProb, s1, s2) {

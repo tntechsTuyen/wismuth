@@ -6,6 +6,9 @@
 .mw-80px{
     max-width: 80px;
 }
+.mw-50px{
+    max-width: 50px;
+}
 
 .elo-selected {
 	border-color: #32a932;

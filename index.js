@@ -3,6 +3,7 @@ const { app, BrowserWindow } = require('electron')
 const path = require('node:path')
 
 const tennisService = require("./src/service/tennis.service")
+const oddsService = require("./src/service/aceodds.service")
 
 let window;
 let settings = {
@@ -10,7 +11,10 @@ let settings = {
     'tennis': {
       'man': {},
       'woman': {}
-    }   
+    },
+    'odds': {
+
+    }
   }
 }
 
@@ -27,6 +31,7 @@ async function createWindow () {
 
   settings.renderer.tennis.man = await tennisService.getTennis(1)
   settings.renderer.tennis.woman = await tennisService.getTennis(0)
+  settings.renderer.odds = await oddsService.getAceOdds()
 
   // and load the index.html of the app.
   window.loadFile('public/view.html')
