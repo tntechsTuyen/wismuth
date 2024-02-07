@@ -1,0 +1,14 @@
+
+::-webkit-scrollbar {
+    display: none;
+}
+
+.mw-80px{
+    max-width: 80px;
+}
+
+.elo-selected {
+	border-color: #32a932;
+    color: #32a932;
+    box-shadow: 0 0.3rem 0.7rem rgba(0,0,0,.15);
+}

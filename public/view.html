@@ -4,19 +4,13 @@
     <meta charset="UTF-8">
     <title>Hello World!</title>
     <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline';" />
-	<script src="plugins/jquery/jquery.min.js"></script>
 	<link rel="stylesheet" type="text/css" href="css/app.min.css">
 	<link rel="stylesheet" type="text/css" href="css/vendor.min.css">
+	<link rel="stylesheet" type="text/css" href="css/style.min.css">
+	<link rel="stylesheet" type="text/css" href="plugins/jquery-ui/css/jquery-ui.css">
+	<script src="plugins/jquery/jquery.min.js"></script>
+	<script src="plugins/jquery-ui/js/jquery-ui.js"></script>
 </head>
-<style>
-    ::-webkit-scrollbar {
-        display: none;
-    }
-    
-    .mw-80px{
-        max-width: 80px;
-    }
-</style>
 <body>
     <main class="m-2">
         <div class="row">
@@ -47,42 +41,66 @@
                         <!-- Player 1 -->
                         <div class="row">
                             <!-- Player 1 -->
-                            <div class="col-8">
+                            <div class="col-6">
                                 <div class="form-floating">
-                                    <input id="player_1" name="player_1" class="form-control fs-15px"/>
+                                    <input id="player_1" name="player_name" class="form-control fs-15px"/>
                                     <label for="player_1" class="d-flex align-items-center fs-13px">Player 1<span class="text-danger ms-1">*</span></label>
                                 </div>
                             </div>
                             <!-- * Player 1 -->
-                            <!-- Rating 1 -->
-                            <div class="col-4">
+
+                            <!-- Rating Elo -->
+                            <div class="col-2 p-0 pe-1">
                                 <div class="form-floating">
-                                    <input id="rating_1" name="rating_1" class="form-control fs-15px" readonly/>
-                                    <label for="rating_1" class="d-flex align-items-center fs-13px">Rating 1<span class="text-danger ms-1">*</span></label>
+                                    <input id="rating_h_elo_1" name="rating_h_elo_1" class="form-control fs-15px elo-selected" value="209" readonly/>
+                                    <label for="rating_h_elo_1" class="d-flex align-items-center fs-13px">H Elo</label>
                                 </div>
                             </div>
-                            <!-- * Rating 1 -->
+                            <div class="col-2 p-0 pe-1">
+                                <div class="form-floating">
+                                    <input id="rating_c_elo_1" name="rating_c_elo_1" class="form-control fs-15px" readonly/>
+                                    <label for="rating_c_elo_1" class="d-flex align-items-center fs-13px">C Elo</label>
+                                </div>
+                            </div>
+                            <div class="col-2 p-0 pe-1">
+                                <div class="form-floating">
+                                    <input id="rating_g_elo_1" name="rating_g_elo_1" class="form-control fs-15px" readonly/>
+                                    <label for="rating_g_elo_1" class="d-flex align-items-center fs-13px">G Elo</label>
+                                </div>
+                            </div>
+                            <!-- * Rating Elo -->
                         </div>
                         <!-- * Player 1 -->
 
                         <!-- Player 2 -->
                         <div class="row mt-2">
-                            <!-- Player 2 -->
-                            <div class="col-8">
+                            <div class="col-6">
                                 <div class="form-floating">
-                                    <input id="player_2" name="player_2" class="form-control fs-15px"/>
+                                    <input id="player_2" name="player_name" class="form-control fs-15px"/>
                                     <label for="player_2" class="d-flex align-items-center fs-13px">Player 2<span class="text-danger ms-1">*</span></label>
                                 </div>
                             </div>
-                            <!-- * Player 2 -->
-                            <!-- Rating 2 -->
-                            <div class="col-4">
+                            
+                            <!-- Rating Elo -->
+                            <div class="col-2 p-0 pe-1">
                                 <div class="form-floating">
-                                    <input id="rating_2" name="rating_2" class="form-control fs-15px" readonly/>
-                                    <label for="rating_2" class="d-flex align-items-center fs-13px">Rating 2<span class="text-danger ms-1">*</span></label>
+                                    <input id="rating_h_elo_2" name="rating_h_elo_2" class="form-control fs-15px elo-selected" readonly/>
+                                    <label for="rating_h_elo_2" class="d-flex align-items-center fs-13px">H Elo</label>
                                 </div>
                             </div>
-                            <!-- * Rating 2 -->
+                            <div class="col-2 p-0 pe-1">
+                                <div class="form-floating">
+                                    <input id="rating_c_elo_2" name="rating_c_elo_2" class="form-control fs-15px" readonly/>
+                                    <label for="rating_c_elo_2" class="d-flex align-items-center fs-13px">C Elo</label>
+                                </div>
+                            </div>
+                            <div class="col-2 p-0 pe-1">
+                                <div class="form-floating">
+                                    <input id="rating_g_elo_2" name="rating_g_elo_2" class="form-control fs-15px" readonly/>
+                                    <label for="rating_g_elo_2" class="d-flex align-items-center fs-13px">G Elo</label>
+                                </div>
+                            </div>
+                            <!-- * Rating Elo -->
                         </div>
                         <!-- * Player 2 -->
 
@@ -193,29 +211,57 @@
 
 </body>
 <script>
+	var dataset = {}	
+
     window.bridge.sendSettings((event, settings) => {
-        console.log(settings)
-        loadPlayers(settings.tennis)
+    	dataset = settings
+        loadPlayers()
     });
 
-    function loadPlayers(tennis){
+    function loadPlayers(){
         const gender = $(`input[name=gender]:checked`).val()
-        const data = tennis[gender]
+        const data = dataset.tennis[gender]
         
-        $("#tbl-players tbody").html("")
-        for(var i = 0; i < data.length; i++){
-            $("#tbl-players tbody").append(`
-                <tr>
-                    <td>${i+1}</td>
-                    <td><label class="mw-80px text-truncate" title="${data[i].name}">${data[i].name}</label></td>
-                    <td>${data[i].age}</td>
-                    <td>${data[i].elo}</td>
-                    <td>${data[i].hElo}</td>
-                    <td>${data[i].cElo}</td>
-                    <td>${data[i].gElo}</td>
-                </tr>
-            `)
+        if(data.length > 0){
+        	$("#tbl-players tbody").html("")
+	        for(var i = 0; i < data.length; i++){
+	            $("#tbl-players tbody").append(`
+	                <tr>
+	                    <td>${i+1}</td>
+	                    <td><label class="mw-80px text-truncate" title="${data[i].name}">${data[i].name}</label></td>
+	                    <td>${data[i].age}</td>
+	                    <td>${data[i].elo}</td>
+	                    <td>${data[i].hElo}</td>
+	                    <td>${data[i].cElo}</td>
+	                    <td>${data[i].gElo}</td>
+	                </tr>
+	            `)
+	        }
+	        var names = data.map(function(item) {
+				return item.name;
+			});
+	        $("input[name=player_name]").autocomplete({source: names})
+        }else{
+        	$("#tbl-players tbody").html(`<tr><td class="text-center" colspan="100%">No data !!!</td></tr>`)
         }
+    }
+
+    $(document).ready(function(){
+    	init()
+    })
+
+    function init(){
+    	actionView()
+    }
+
+    function actionView(){
+    	$("input[name=gender]").change(function(){
+    		const gender = $(this).val()
+    		loadPlayers()
+    	})
+    	$(`input[name=player_name]`).change(function(){
+    		console.log($(this).val())
+    	})
     }
 </script>
 </html>
