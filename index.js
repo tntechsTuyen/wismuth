@@ -23,6 +23,8 @@ async function createWindow () {
   const window = new BrowserWindow({
     width: 1000,
     height: 800,
+    title: "TennisElotool",
+    autoHideMenuBar: true,
     webPreferences: {
       preload: path.join(__dirname, 'public/js/preload.js'),
       nativeWindowOpen: true
