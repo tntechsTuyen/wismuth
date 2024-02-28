@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+    <title>TennisElotool</title>
+	<link rel="stylesheet" type="text/css" href="css/app.min.css">
+	<link rel="stylesheet" type="text/css" href="css/vendor.min.css">
+	<link rel="stylesheet" type="text/css" href="css/style.min.css">
+	<link rel="stylesheet" type="text/css" href="plugins/jquery-ui/css/jquery-ui.css">
+	<script src="plugins/jquery/jquery.min.js"></script>
+	<script src="plugins/jquery-ui/js/jquery-ui.js"></script>
+	<script>
+		var dataset = {
+		    matches: {},
+		    matchmx: {
+		    	man: [],
+		    	woman: []
+		    },
+		    crank: {
+		    	man: {},
+		    	woman: {}
+		    },
+		    player: {
+		    	p_1: {},
+		    	p_2: {}
+		    }
+		}
+
+	</script>
+	<script src="https://www.minorleaguesplits.com/tennisabstract/cgi-bin/jsmatches/leadersource.js"></script>
+	<script>
+		dataset.matchmx.man.push(...matchmx)
+		dataset.crank.man = {...dataset.crank.man, ...crank}
+	</script>
+	<script src="https://www.minorleaguesplits.com/tennisabstract/cgi-bin/jsmatches/leadersource51.js"></script>
+	<script>
+		dataset.matchmx.man.push(...matchmx)
+		dataset.crank.man = {...dataset.crank.man, ...crank}
+	</script>
+	<script src="https://www.minorleaguesplits.com/tennisabstract/cgi-bin/jsmatches/leadersource_wta.js"></script>
+	<script>
+		dataset.matchmx.woman.push(...matchmx)
+		dataset.crank.woman = {...dataset.crank.woman, ...crank}
+	</script>
+	<script src="https://www.minorleaguesplits.com/tennisabstract/cgi-bin/jsmatches/leadersource51_wta.js"></script>
+	<script>
+		dataset.matchmx.woman.push(...matchmx)
+		dataset.crank.woman = {...dataset.crank.woman, ...crank}
+	</script>
+</head>
+<body>
+<div id="menu-hide"></div>
+
+    <main class="m-2">
+        <div class="row">
+            <label class="form-label col-form-label col-2">Gender</label>
+            <div class="col-3 pt-2">
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" id="gender1" name="gender" value="man" checked>
+                    <label class="form-check-label" for="gender1">Man</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" id="gender2" name="gender" value="woman">
+                    <label class="form-check-label" for="gender2">Woman</label>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-2">
+            <div class="col-6">
+                <div class="panel panel-inverse">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">Player information</h4>
+                        <div class="panel-heading-btn">
+                            <a href="javascript:;" class="btn btn-xs btn-icon btn-success" data-toggle="panel-reload" ><i class="fa fa-redo"></i></a>
+                            <a href="javascript:;" class="btn btn-xs btn-icon btn-warning" data-toggle="panel-collapse" ><i class="fa fa-minus"></i></a>
+                        </div>
+                    </div>
+                    <div class="panel-body">
+                        <!-- Player 1 -->
+                        <div class="row">
+                            <!-- Player 1 -->
+                            <div class="col-5">
+                                <div class="form-floating">
+                                    <input id="player_1" name="player_name" class="form-control fs-15px"/>
+                                    <label for="player_1" class="d-flex align-items-center fs-13px">Player 1<span class="text-danger ms-1">*</span></label>
+                                </div>
+                            </div>
+                            <!-- * Player 1 -->
+
+                            <!-- Rating Elo -->
+                            <div class="col-4 p-0 pe-1">
+                                <div class="form-floating">
+                                    <input id="rating_serve_1" name="rating_serve_1" class="form-control fs-15px" readonly/>
+                                    <label for="rating_serve_1" class="d-flex align-items-center fs-13px">Serve<span class="text-info ms-1">(MW | 1stln | 1st | 2nd)</span></label>
+                                </div>
+                            </div>
+                            <div class="col-3 p-0 pe-1">
+                                <div class="form-floating">
+                                    <input id="rating_return_1" name="rating_return_1" class="form-control fs-15px" readonly/>
+                                    <label for="rating_return_1" class="d-flex align-items-center fs-13px">Return<span class="text-info ms-1">(RPW | v2nd | Brk)</span></label>
+                                </div>
+                            </div>
+                            <!-- * Rating Elo -->
+                        </div>
+                        <!-- * Player 1 -->
+
+                        <!-- Player 2 -->
+                        <div class="row mt-2">
+                            <div class="col-5">
+                                <div class="form-floating">
+                                    <input id="player_2" name="player_name" class="form-control fs-15px"/>
+                                    <label for="player_2" class="d-flex align-items-center fs-13px">Player 2<span class="text-danger ms-1">*</span></label>
+                                </div>
+                            </div>
+                            
+                            <!-- Rating Elo -->
+                            <div class="col-4 p-0 pe-1">
+                                <div class="form-floating">
+                                    <input id="rating_serve_2" name="rating_serve_2" class="form-control fs-15px" readonly/>
+                                    <label for="rating_serve_2" class="d-flex align-items-center fs-13px">Serve<span class="text-info ms-1">(MW | 1stln | 1st | 2nd)</span></label>
+                                </div>
+                            </div>
+                            <div class="col-3 p-0 pe-1">
+                                <div class="form-floating">
+                                    <input id="rating_return_2" name="rating_return_2" class="form-control fs-15px" readonly/>
+                                    <label for="rating_return_2" class="d-flex align-items-center fs-13px">Return<span class="text-info ms-1">(RPW | v2nd | Brk)</span></label>
+                                </div>
+                            </div>
+                            <!-- * Rating Elo -->
+                        </div>
+                        <!-- * Player 2 -->
+
+                        <!-- Type -->
+                        <div class="row mt-2">
+                            <div class="col-12">
+                                <div class="form-floating">
+                                    <select id="type" name="type" class="form-control fs-15px">
+                                        <option value="1" data-elo="h">Hard</option>
+                                        <option value="2" data-elo="c">Clay</option>
+                                        <option value="3" data-elo="g">Grass</option>
+                                    </select>
+                                    <label for="type" class="d-flex align-items-center fs-13px">Type</label>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- * Type -->
+                    </div>
+                </div>
+
+                <div class="panel panel-inverse">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">Result</h4>
+                        <div class="panel-heading-btn">
+                            <a href="javascript:;" class="btn btn-xs btn-icon btn-success" data-toggle="panel-reload" ><i class="fa fa-redo"></i></a>
+                            <a href="javascript:;" class="btn btn-xs btn-icon btn-warning" data-toggle="panel-collapse" ><i class="fa fa-minus"></i></a>
+                        </div>
+                    </div>
+                    <div class="panel-body p-0">
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="table-responsive">
+                                    <table class="table table-bordered mb-0">
+                                        <thead>
+                                        	<thead class="text-center">
+	                                            <tr>
+	                                                <th class="align-middle" rowspan="2">Outcome</th>
+	                                                <th class="align-middle" rowspan="2">Age</th>
+	                                                <th colspan="4">Serve (%)</th>
+	                                                <th colspan="3">Return (%)</th>
+	                                            </tr>
+	                                            <tr>
+	                                            	<th>MW</th>
+	                                            	<th>1stln</th>
+	                                            	<th>1st</th>
+	                                            	<th>2nd</th>
+	                                            	<th>RPW</th>
+	                                            	<th>v2nd</th>
+	                                            	<th>Brk</th>
+	                                            </tr>
+	                                        </thead>
+                                        </thead>
+                                        <tbody>
+                                            <tr id="result_player_1">
+                                                <td>Player 1</td>
+                                                <td class="age"></td>
+                                                <td class="mw"></td>
+                                            	<td class="1stln"></td>
+                                            	<td class="1st"></td>
+                                            	<td class="2nd"></td>
+                                            	<td class="rpw"></td>
+                                            	<td class="v2nd"></td>
+                                            	<td class="brk"></td>
+                                            </tr>
+                                            <tr id="result_player_2">
+                                                <td>Player 2</td>
+                                                <td class="age"></td>
+                                                <td class="mw"></td>
+                                            	<td class="1stln"></td>
+                                            	<td class="1st"></td>
+                                            	<td class="2nd"></td>
+                                            	<td class="rpw"></td>
+                                            	<td class="v2nd"></td>
+                                            	<td class="brk"></td>
+                                            </tr>
+                                            <tr>
+                                            	<td colspan="100%">
+                                                    MESSAGE: <strong id="result-message" class="text-danger"></strong>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-6">
+                <div class="panel panel-inverse">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">Players</h4>
+                        <div class="panel-heading-btn">
+                            <a href="javascript:;" class="btn btn-xs btn-icon btn-success" data-toggle="panel-reload" ><i class="fa fa-redo"></i></a>
+                            <a href="javascript:;" class="btn btn-xs btn-icon btn-warning" data-toggle="panel-collapse" ><i class="fa fa-minus"></i></a>
+                        </div>
+                    </div>
+                    <div class="panel-body p-0" style="height: 85vh; overflow-y: scroll;">
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="table-responsive">
+                                    <table id="tbl-players" class="table table-bordered mb-0">
+                                        <thead class="text-center">
+                                            <tr>
+                                                <th class="align-middle" rowspan="2">Player</th>
+                                                <th class="align-middle" rowspan="2">Age</th>
+                                                <th colspan="4">Serve (%)</th>
+                                                <th colspan="3">Return (%)</th>
+                                            </tr>
+                                            <tr>
+                                            	<th>MW</th>
+                                            	<th>1stln</th>
+                                            	<th>1st</th>
+                                            	<th>2nd</th>
+                                            	<th>RPW</th>
+                                            	<th>v2nd</th>
+                                            	<th>Brk</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td class="text-center" colspan="100%">No data !!!</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</body>
+	<script src="js/view2/menu.min.js"></script>
+	<script src="js/view2/main.min.js"></script>
+	<script>
+
+	function sortable(d){
+		return Object.entries(d)
+		    .sort(([,a],[,b]) => a-b)
+		    .reduce((r, [k, v]) => ({ ...r, [k]: v }), {});
+	}
+		
+    function loadPlayers(){
+        const gender = $(`input[name=gender]:checked`).val()
+    	matchmx = dataset.matchmx[gender]
+    	makeMatch()
+        const data = sortable(dataset.crank[gender])
+        const players = dataset.matches
+
+        if(Object.keys(data).length > 0){
+        	$("#tbl-players tbody").html("")
+	        for(var key in data){
+	        	const item = players[`${key}`]
+	        	if(item == null) continue;
+	            $("#tbl-players tbody").append(`
+	                <tr>
+	                    <td><label class="mw-180px text-truncate" title="${key}">[${data[key]}]${key}</label></td>
+	                    <td>${item[0]}</td>
+	                    <td>${item[1]}</td>
+	                    <td>${item[2]}</td>
+	                    <td>${item[3]}</td>
+	                    <td>${item[4]}</td>
+	                    <td>${item[5]}</td>
+	                    <td>${item[6]}</td>
+	                    <td>${item[7]}</td>
+	                </tr>
+	            `)
+	        }
+	        $("input[name=player_name]").autocomplete({source: Object.keys(data)})
+        }else{
+        	$("#tbl-players tbody").html(`<tr><td class="text-center" colspan="100%">No data !!!</td></tr>`)
+        }
+    }
+
+    $(document).ready(function(){
+    	init()
+    })
+
+    function init(){
+    	actionView()
+		loadPlayers()
+    }
+
+    function actionView(){
+    	$("input[name=gender]").change(function(){
+    		loadPlayers()
+			$(`input[name=player_name]`).val("")
+			$(`input[name=player_name]`).removeClass("is-valid")
+			$(`input[name=player_name]`).removeClass("is-invalid")
+			$(`input[name=rating_serve_1]`).val("")
+			$(`input[name=rating_return_1]`).val("")
+			$(`input[name=rating_serve_2]`).val("")
+			$(`input[name=rating_return_2]`).val("")
+            $(`#result_player_1 span`).remove()
+            $(`#result_player_2 span`).remove()
+            $(`#result-message`).html("")
+            dataset.player[`p_1`] = null
+            dataset.player[`p_2`] = null
+    	})
+
+    	$(`input[name=player_name]`).keyup(function(){
+    		var id = $(this).attr('id')
+    		id = id.replace("player_", "")
+			$(`input[name=rating_serve_${id}]`).val("")
+			$(`input[name=rating_return_${id}]`).val("")
+			$(this).removeClass("is-valid")
+			$(this).removeClass("is-invalid")
+    	})
+    	$(`input[name=player_name]`).change(function(){
+    		var id = $(this).attr('id')
+    		id = id.replace("player_", "")
+    		const name = $(this).val()
+    		const gender = $("input[name=gender]:checked").val()
+
+    		const index = Object.keys(dataset.crank[gender]).indexOf(name)
+    		if(index != -1){
+    			const playerInfo = dataset.matches[name]
+    			dataset.player[`p_${id}`] = playerInfo
+    			$(`input[name=rating_serve_${id}]`).val(`${playerInfo[1]} | ${playerInfo[2]} | ${playerInfo[3]} | ${playerInfo[4]}`)
+				$(`input[name=rating_return_${id}]`).val(`${playerInfo[5]} | ${playerInfo[6]} | ${playerInfo[7]}`)
+    			$(this).addClass("is-valid")
+                applyParams()
+    		}else{
+                dataset.player[`p_${id}`] = null
+    			$(this).addClass("is-invalid")
+    		}
+    	})
+    	$("select[name=type]").change(function(){
+            applyParams()
+    	})
+    }
+
+
+	function applyParams() {
+	    if(dataset.player.p_1.length > 0 && dataset.player.p_2.length > 0){
+	 		const p1 = dataset.player.p_1;
+	 		const p2 = dataset.player.p_2;
+	 		var chs = []
+	        for(var i = 0; i < p1.length; i++){
+	        	/**
+	        	* if(p1 > p2) => value 1
+	        	* else => value 0
+	        	*/
+	        	const val = p1[i]*1 > p2[i]*1 ? 1 : 0
+	        	if(i > 0){
+		        	$("#result_player_1").find(`td:eq(${i+1})`).html(`<span class="${val ? "text-success" : "text-danger"}">${p1[i]}</span>`)
+		        	$("#result_player_2").find(`td:eq(${i+1})`).html(`<span class="${!val ? "text-success" : "text-danger"}">${p2[i]}</span>`)
+	        		chs.push(val)
+	        	}else{
+	        		$("#result_player_1").find(`td:eq(${i+1})`).html(`<span>${p1[i]}</span>`)
+		        	$("#result_player_2").find(`td:eq(${i+1})`).html(`<span>${p2[i]}</span>`)
+	        	}
+	        }
+	        const elo = $("select[name=type]").find(":selected").data("elo")
+	        const cnt1 = chs.filter(x => x==1).length
+	        const cnt2 = chs.length - cnt1
+
+	        var message = ""
+	        switch(elo){
+	        	case "h": 
+	        	case "c": 
+	        		message = `${cnt1 > cnt2 ? "Player 1" : "Player 2"} is more reliable on hard court than ${cnt1 > cnt2 ? "Player 2" : "Player 1"}`
+	        		break;
+	        	case "g": 
+	        		message = `${chs[0] + chs[2] + chs[4] >= 2 ? "Player 1" : "Player 2"} is more reliable on hard court than ${chs[0] + chs[2] + chs[4] >= 2 ? "Player 2" : "Player 1"}`
+	        		break;
+	        }
+	        $("#result-message").html(message)
+
+	    }
+	}
+	</script>
+</html>
