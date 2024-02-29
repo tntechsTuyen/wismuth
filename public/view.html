@@ -10,6 +10,7 @@
 	<link rel="stylesheet" type="text/css" href="plugins/jquery-ui/css/jquery-ui.css">
 	<script src="plugins/jquery/jquery.min.js"></script>
 	<script src="plugins/jquery-ui/js/jquery-ui.js"></script>
+    <script src="js/rest.min.js"></script>
 </head>
 <body>
     <main class="m-2">
@@ -216,22 +217,46 @@
 <script src="js/erf.min.js"></script>
 <script src="js/utils.min.js"></script>
 <script>
-	var dataset = {}	
+	var dataset = {
+        tennis: {
+            man: null,
+            woman: null
+        },
+        player: {
+            "p_1": {},
+            "p_2": {}
+        },
+        tennisM: {}
+    }	
 
-    window.bridge.sendSettings((event, settings) => {
-    	dataset = settings
-    	dataset.tennis = settings.tennis
-        dataset.odds = settings.odds
-    	dataset.tennisM = {}
-    	dataset.player = {"p_1": {},"p_2": {}}
-    	dataset.tennisM.man = dataset.tennis.man.map(function(item) {
-			return item.name;
-		});
-		dataset.tennisM.woman = dataset.tennis.woman.map(function(item) {
-			return item.name;
-		});
+    $(document).ready(function(){
+        init()
+    })
+
+    async function init(){
+        await dataOdds()
+        await dataPlayer()
         loadPlayers()
-    });
+        actionView()
+    }
+
+    async function dataOdds(){
+        const data = await rest.get("http://127.0.0.1:81/odds", "")
+        dataset.odds = data
+    }
+
+    async function dataPlayer(){
+        const dataMan = await rest.get("http://127.0.0.1:81/tennis/1", "")
+        const dataWoman = await rest.get("http://127.0.0.1:81/tennis/0", "")
+        dataset.tennis.man = dataMan
+        dataset.tennis.woman = dataWoman
+        dataset.tennisM.man = dataset.tennis.man.map(function(item) {
+            return item.name;
+        });
+        dataset.tennisM.woman = dataset.tennis.woman.map(function(item) {
+            return item.name;
+        });
+    }
 
     function loadPlayers(){
         const gender = $(`input[name=gender]:checked`).val()
@@ -256,14 +281,6 @@
         }else{
         	$("#tbl-players tbody").html(`<tr><td class="text-center" colspan="100%">No data !!!</td></tr>`)
         }
-    }
-
-    $(document).ready(function(){
-    	init()
-    })
-
-    function init(){
-    	actionView()
     }
 
     function actionView(){

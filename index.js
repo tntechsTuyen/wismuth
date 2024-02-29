@@ -1,9 +1,7 @@
 // Modules to control application life and create native browser window
 const { app, BrowserWindow } = require('electron')
 const path = require('node:path')
-
-const tennisService = require("./src/service/tennis.service")
-const oddsService = require("./src/service/aceodds.service")
+require('./api.js')
 
 let window;
 let settings = {
@@ -21,7 +19,7 @@ let settings = {
 async function createWindow () {
   // Create the browser window.
   const window = new BrowserWindow({
-    width: 1000,
+    width: 1200,
     height: 800,
     title: "TennisElotool",
     autoHideMenuBar: true,
@@ -31,9 +29,6 @@ async function createWindow () {
     }
   })
 
-  settings.renderer.tennis.man = await tennisService.getTennis(1)
-  settings.renderer.tennis.woman = await tennisService.getTennis(0)
-  settings.renderer.odds = await oddsService.getAceOdds()
 
   // and load the index.html of the app.
   window.loadFile('public/view.html')
