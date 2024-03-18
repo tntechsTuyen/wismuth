@@ -35,7 +35,7 @@ async function createWindow () {
     .then(() => { window.webContents.send('sendSettings', settings.renderer); })
     .then(() => { window.show(); });
   // Open the DevTools.
-  // window.webContents.openDevTools()
+  window.webContents.openDevTools()
 }
 
 // This method will be called when Electron has finished
