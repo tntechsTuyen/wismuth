@@ -17,8 +17,8 @@ contextBridge.exposeInMainWorld(
     // Allowed 'ipcRenderer' methods
     'bridge', {
         // From main to render
-        sendSettings: (message) => {
-            ipcRenderer.on('sendSettings', message);
-        }
+        // sendSettings: (message) => {
+        //     ipcRenderer.on('sendSettings', message);
+        // }
     }
 );

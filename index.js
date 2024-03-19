@@ -4,18 +4,6 @@ const path = require('node:path')
 require('./api.js')
 
 let window;
-let settings = {
-  'renderer': {
-    'tennis': {
-      'man': {},
-      'woman': {}
-    },
-    'odds': {
-
-    }
-  }
-}
-
 async function createWindow () {
   // Create the browser window.
   const window = new BrowserWindow({
@@ -31,11 +19,10 @@ async function createWindow () {
 
 
   // and load the index.html of the app.
-  window.loadFile('public/view.html')
-    .then(() => { window.webContents.send('sendSettings', settings.renderer); })
+  window.loadFile('public/main.html')
     .then(() => { window.show(); });
   // Open the DevTools.
-  window.webContents.openDevTools()
+  // window.webContents.openDevTools()
 }
 
 // This method will be called when Electron has finished
