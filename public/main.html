@@ -77,7 +77,7 @@
             </a>
         </li>
     </ul>
-    <div class="tab-content panel p-3 rounded-0 rounded-bottom">
+    <div class="tab-content panel p-3 rounded-0 rounded-bottom" style="background: #f2f3f4">
         <div class="tab-pane fade active show" id="default-tab-1">
             <main class="m-2">
                 <div class="row">
@@ -204,7 +204,7 @@
                                                 <thead>
                                                     <tr>
                                                         <th>Outcome</th>
-                                                        <th colspan="2">Probability</th>
+                                                        <th>Probability</th>
                                                         <th>Fraction</th>
                                                         <th>Decimal</th>
                                                         <th>American</th>
@@ -213,7 +213,7 @@
                                                 <tbody>
                                                     <tr id="result_player_1">
                                                         <td>Player 1 win</td>
-                                                        <td class="probability"></td>
+                                                        <td class="probability d-none"></td>
                                                         <td class="implied"></td>
                                                         <td class="fraction"></td>
                                                         <td class="decimal"></td>
@@ -221,11 +221,41 @@
                                                     </tr>
                                                     <tr id="result_player_2">
                                                         <td>Player 2 win</td>
-                                                        <td class="probability"></td>
+                                                        <td class="probability d-none"></td>
                                                         <td class="implied"></td>
                                                         <td class="fraction"></td>
                                                         <td class="decimal"></td>
                                                         <td class="american"></td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                            <table class="table table-bordered mt-2 mb-0">
+                                                <thead>
+                                                    <tr>
+                                                        <th style="width: 50px"></th>
+                                                        <th>Content</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td><span class="badge bg-secondary rounded-pill">Stamina</span></td>
+                                                        <td class="message-stamina"></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td><span class="badge bg-secondary rounded-pill">Age</span></td>
+                                                        <td class="message-age"></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td><span class="badge bg-secondary rounded-pill">Probability</span></td>
+                                                        <td class="message-probability"></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td><span class="badge bg-secondary rounded-pill">ELO</span></td>
+                                                        <td class="message-elo"></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td><span class="badge bg-secondary rounded-pill">Form</span></td>
+                                                        <td class="message-form"></td>
                                                     </tr>
                                                 </tbody>
                                             </table>
@@ -260,6 +290,7 @@
                                                         <th>hElo</th>
                                                         <th>cElo</th>
                                                         <th>gElo</th>
+                                                        <th>Peak</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -364,6 +395,7 @@
                                     <div class="col-12">
                                         <div class="form-floating">
                                             <select id="type" name="type" class="form-control fs-15px">
+                                                <option value="0" data-elo="all">All</option>
                                                 <option value="1" data-elo="h">Hard</option>
                                                 <option value="2" data-elo="c">Clay</option>
                                                 <option value="3" data-elo="g">Grass</option>
@@ -558,6 +590,7 @@
                         <td>${data[i].hElo}</td>
                         <td>${data[i].cElo}</td>
                         <td>${data[i].gElo}</td>
+                        <td>${data[i].peakElo}</td>
                     </tr>
                 `)
             }
@@ -595,6 +628,13 @@
         dataset.tab1.tennisM.woman = dataset.tab1.tennis.woman.map(function(item) {
             return item.name;
         });
+    }
+
+    async function getPlayerRate(name){
+        name = name.replace(/\s/g, '');
+        console.log(name)
+        const data = await rest.get(`http://127.0.0.1:81/tennis/recent/${name}`)
+        return data
     }
 
     function actionView(){
@@ -642,7 +682,18 @@
     		}
     	})
     	$("#default-tab-2 select[name=type]").change(function(){
-            applyParams2()
+            var val = $(this).find(":selected").val()*1
+            $(`.surfacechoice`).removeClass("selected")
+            $(`.surfacechoice`).removeClass("surfaceselected")
+            if(val!=0){
+                $(`#surface${val-1}`).addClass("selected")
+                $(`#surface${val-1}`).addClass("surfaceselected")
+            }else{
+                $(`#surfacedef`).addClass("selected")
+                $(`#surfacedef`).addClass("surfaceselected")
+            }
+            loadPlayers2()
+            $(`#default-tab-2 input[name=player_name]`).change()
     	})
 
         $("#default-tab-1 input[name=gender1]").change(function(){
@@ -665,6 +716,7 @@
             $("#default-tab-1 .fraction").html("")
             $("#default-tab-1 .decimal").html("")
             $("#default-tab-1 .american").html("")
+            //$("#default-tab-1 .result-message").html("")
 
             dataset.tab1.player[`p_1`] = null
             dataset.tab1.player[`p_2`] = null
@@ -734,19 +786,21 @@
 		        	$("#default-tab-2 .result_player_2").find(`td:eq(${i+1})`).html(`<span>${p2[i]}</span>`)
 	        	}
 	        }
-	        const elo = $("select[name=type]").find(":selected").data("elo")
+            const elo = $("#default-tab-2 select[name=type]").find(":selected").data("elo")
+            const eloText = $("#default-tab-2 select[name=type]").find(":selected").text()
 	        const cnt1 = chs.filter(x => x==1).length
 	        const cnt2 = chs.length - cnt1
 
 	        var message = ""
 	        switch(elo){
-	        	case "h": 
-	        	case "c": 
-	        		message = `${cnt1 > cnt2 ? "Player 1" : "Player 2"} is more reliable on hard court than ${cnt1 > cnt2 ? "Player 2" : "Player 1"}`
-	        		break;
 	        	case "g": 
-	        		message = `${chs[0] + chs[2] + chs[4] >= 2 ? "Player 1" : "Player 2"} is more reliable on hard court than ${chs[0] + chs[2] + chs[4] >= 2 ? "Player 2" : "Player 1"}`
+	        		message = `${chs[0] + chs[2] + chs[4] >= 2 ? "Player 1" : "Player 2"} is more reliable on ${eloText} court than ${chs[0] + chs[2] + chs[4] >= 2 ? "Player 2" : "Player 1"}`
 	        		break;
+                case "h": 
+                case "c":
+                default:  
+                    message = `${cnt1 > cnt2 ? "Player 1" : "Player 2"} is more reliable on ${eloText} court than ${cnt1 > cnt2 ? "Player 2" : "Player 1"}`
+                    break;
 	        }
 	        $("#default-tab-2 .result-message").html(message)
 
@@ -794,8 +848,15 @@ function findOdds(prob){
     }
 }
 
-function applyParams1() {
+async function applyParams1() {
+    $("#default-tab-1 .message-age").html("")
+    $("#default-tab-1 .message-probability").html("")
+    $("#default-tab-1 .message-elo").html("")
+    $("#default-tab-1 .message-stamina").html("")
+    $("#default-tab-1 .message-form").html("")
+    
     if(dataset.tab1.player.p_1.name != undefined && dataset.tab1.player.p_2.name != undefined){
+        //$("#default-tab-1 .result-message").html("")
         var rating1 = getRating(dataset.tab1.player.p_1);
         var rating2 = getRating(dataset.tab1.player.p_2);
 
@@ -804,6 +865,62 @@ function applyParams1() {
         var eScoreH = eloFn(eloDiffH)
         var eScore = eScoreH.toFixed(9);
         updateProbabilities(eScoreH, 0);
+
+        // Check age
+        if(dataset.tab1.player.p_1.age > dataset.tab1.player.p_2.age){
+            $("#default-tab-1 .message-age").append(`Tennis player [${dataset.tab1.player.p_1.name}] is older than tennis player [${dataset.tab1.player.p_2.name}].<br>`)
+        }else{
+            $("#default-tab-1 .message-age").append(`Tennis player [${dataset.tab1.player.p_2.name}] is older than tennis player [${dataset.tab1.player.p_1.name}].<br>`)
+        }
+        if(dataset.tab1.player.p_1.age > 30) $("#default-tab-1 .message-age").append(`Player [${dataset.tab1.player.p_1.name}] over 30 years old<br>`)
+        if(dataset.tab1.player.p_2.age > 30) $("#default-tab-1 .message-age").append(`Player [${dataset.tab1.player.p_2.name}] over 30 years old<br>`)
+
+        // Check Elo
+        let p1Elo = dataset.tab1.player.p_1.peakElo - dataset.tab1.player.p_1.elo
+        let p2Elo = dataset.tab1.player.p_2.peakElo - dataset.tab1.player.p_2.elo
+        $("#default-tab-1 .message-elo").append(`[${dataset.tab1.player.p_1.name}]: Peak elo (${dataset.tab1.player.p_1.peakElo}) - Current elo (${dataset.tab1.player.p_1.elo}) = ${p1Elo.toFixed(0)} points from peak<br>`)
+        $("#default-tab-1 .message-elo").append(`[${dataset.tab1.player.p_2.name}]: Peak elo (${dataset.tab1.player.p_2.peakElo}) - Current elo (${dataset.tab1.player.p_2.elo}) = ${p2Elo.toFixed(0)} points from peak<br>`)
+        if(p1Elo > p2Elo){
+            $("#default-tab-1 .message-elo").append(`=> [${dataset.tab1.player.p_1.name}] is currently further.`)
+        }else{
+            $("#default-tab-1 .message-elo").append(`=> [${dataset.tab1.player.p_2.name}] is currently further.`)
+        }
+
+        // Stamina
+        let rateP1 = await getPlayerRate(dataset.tab1.player.p_1.name);
+        let rateP2 = await getPlayerRate(dataset.tab1.player.p_2.name);
+
+        let recentsP1 = rateP1.recents;
+        let recentsP2 = rateP2.recents;
+
+        let totalSourceP1 = 0, totalSourceP2 = 0;
+        let totalTimeP1 = 0, totalTimeP2 = 0
+        for(let i = 0; i < recentsP1.length; i++){
+            totalSourceP1 += recentsP1[i].totalSource
+            totalTimeP1 += recentsP1[i].time
+        }
+
+        $("#default-tab-1 .message-stamina").append(`[${dataset.tab1.player.p_1.name}]: ${totalSourceP1} games and ${recentsP1.length} this week, last match lasts ${totalTimeP1.toFixed(2)} hours.<br>`)
+
+        for(let i = 0; i < recentsP2.length; i++){
+            totalSourceP2 += recentsP2[i].totalSource
+            totalTimeP2 += recentsP2[i].time
+        }
+        $("#default-tab-1 .message-stamina").append(`[${dataset.tab1.player.p_2.name}]: ${totalSourceP2} games and ${recentsP2.length} this week, last match lasts ${totalTimeP2.toFixed(2)} hours.<br>`)
+        if(totalSourceP1 > totalSourceP2 && totalTimeP1 > totalTimeP2) $("#default-tab-1 .message-stamina").append(`=> ${dataset.tab1.player.p_2.name} has less stamina than ${dataset.tab1.player.p_1.name} before this match`)
+        else if (totalSourceP1 < totalSourceP2 && totalTimeP1 < totalTimeP2) $("#default-tab-1 .message-stamina").append(`=> ${dataset.tab1.player.p_1.name} has less stamina than ${dataset.tab1.player.p_2.name} before this match`)
+
+
+        let typeIndex = $("#default-tab-1 select[name=type]").prop('selectedIndex')
+        let tourLevelP1 = rateP1.tourLevels[typeIndex]
+        let tourLevelP2 = rateP2.tourLevels[typeIndex]
+        let typeText = $("#default-tab-1 select[name=type] option:selected").text()
+
+        if(
+            tourLevelP1.win > tourLevelP2.win 
+            && tourLevelP1.m > tourLevelP2.m
+        ) $("#default-tab-1 .message-form").html(`Player [${dataset.tab1.player.p_1.name}] has better ${typeText} court form than player [${dataset.tab1.player.p_2.name}].`)
+        else $("#default-tab-1 .message-form").html(`Player [${dataset.tab1.player.p_2.name}] has better ${typeText} court form than player [${dataset.tab1.player.p_1.name}].`)
     }
 }
 
@@ -860,6 +977,12 @@ function updateProbabilities(eScore, drawProb) {
     $("#result_player_2 .fraction").text(odds2[0].fraction);
     $("#result_player_2 .decimal").text(odds2[0].decimal);
     $("#result_player_2 .american").text(odds2[0].american);
+
+    if(odds1[1] > odds2[1]){
+        $("#default-tab-1 .message-probability").append(`Player [${dataset.tab1.player.p_1.name}] has better on-court skills than player [${dataset.tab1.player.p_2.name}].`)
+    }else{
+        $("#default-tab-1 .message-probability").append(`Player [${dataset.tab1.player.p_2.name}] has better on-court skills than player [${dataset.tab1.player.p_1.name}].`)
+    }
     // $("span#draw").text(probs[2]);
 }
 

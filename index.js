@@ -7,8 +7,8 @@ let window;
 async function createWindow () {
   // Create the browser window.
   const window = new BrowserWindow({
-    width: 1200,
-    height: 800,
+    width: 1300,
+    height: 900,
     title: "TennisElotool",
     autoHideMenuBar: true,
     webPreferences: {

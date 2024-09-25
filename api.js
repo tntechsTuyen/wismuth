@@ -19,6 +19,12 @@ app.get("/tennis/:gender", async function(req, res){
 	res.json(data)
 })
 
+app.get("/tennis/recent/:name", async function(req, res){
+	const name = req.params.name
+	const data = await tennisService.getRecent(name)
+	res.json(data)
+})
+
 app.listen(81, () => {
   console.log('Express started on port', 81);
 })
